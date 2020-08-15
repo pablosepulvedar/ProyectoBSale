@@ -1,8 +1,9 @@
+
 <!doctype html>
-<html lang="en">
+<html lang="es" xml:lang="es" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <!-- Required meta tags -->
-    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html"; charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
@@ -48,14 +49,36 @@
       </div>
     </nav>
 
-    <section class="container">
-      <p class="mt-5 text-center text-uppercase font-weight-bold">
-        Vuelos en Parapente
-      </p>
-      <p>
-        Te llevamos a volar en parapente y te enseñamos a volar, con la mayor seguridad para tí y tus amigos.
-        <br>Somos una Agrupación de instructores de parapente, Chile parapente, que hacemos vuelos y promovemos el deporte en Chile. En ningún momento te expondremos a un riesgo o peligro. Siempre estarás cuidado y supervisado por profesionales. Tu sólo debes atreverte a disfrutar una de las experiencias más extraordinarias de la vida: Volar como las aves!
-      </p>
+    <section class="container fondo">
+
+  <?php
+
+    include_once 'conexion.php';
+          
+          
+    $sql = "SELECT * from product ";
+    $result= mysqli_query($conexion,$sql);
+
+    while($mostrar=mysqli_fetch_array($result)){
+      $imgUrl = $mostrar['url_image'];
+  ?>
+          <div class="panel panel-default" align='center'> 
+            <div class="panel-heading">
+              <?php echo $mostrar['name']?>
+            </div>
+              <div class="panel-body">
+                <img src=<?php echo $imgUrl ?> alt="producto">
+              </div>
+
+              <table class="table">
+                <?php echo "<br/>",'$', $mostrar['price'], ' BotonCarrito'?>
+              </table>
+          </div>
+  <?php
+    }
+  ?>
+  
+
     </section>
 
     <!-- Optional JavaScript -->
