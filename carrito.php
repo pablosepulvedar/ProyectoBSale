@@ -31,7 +31,7 @@ if (isset($_POST['btnAction'])) {
         }else{
             $mensaje.="Ups.... Cantidad incorrecto ".$CANTIDAD; break;}
     
-    if(isset($_SESSION['CARRITO'])){
+    if(!isset($_SESSION['CARRITO'])){
         $producto=array(
             'ID'=>$ID,
             'NOMBRE'=>$NOMBRE,
@@ -49,6 +49,7 @@ if (isset($_POST['btnAction'])) {
         );
         $_SESSION['CARRITO'][$NumeroProductos]=$producto;
     }
+    $mensaje= print_r($_SESSION, true);
 
     break;
     }
