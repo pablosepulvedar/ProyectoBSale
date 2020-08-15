@@ -1,16 +1,17 @@
+<?php 
+  include_once 'global/conexion.php';
+  include_once 'global/safe.php';
+  include 'carrito.php';
+?>
 
-<!doctype html>
-<html lang="es" xml:lang="es" xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <!-- Required meta tags -->
-    <meta http-equiv="Content-Type" content="text/html"; charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!DOCTYPE html>
+<html lang="en">
+<head>
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="css/bootstrap.css">
-    
-    <!--Estilos en Css-->
-    <style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+      <style>
       .slider{
         background: url("img/Fondo.jpg");
         height: 100vh;
@@ -19,15 +20,20 @@
       }
     </style>
 
-    <title>BSale</title>
-  </head>
-  <body>
+  <title>BSale</title>
+  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+</head>
+<body>
 
     <section class="container-fluid slider d-flex justify-content-center align-items-center">
         <img src="img/logoBsale.png" width="550" height="250" class="d-inline-block align-top" alt="Logo" loading="lazy">
-
     </section>
-    
+
     <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
       <a class="navbar-brand" href="#">
         BSale
@@ -39,8 +45,7 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <div class="navbar-nav mr-auto text-center">
           <a class="nav-item nav-link active" href="#">Inicio <span class="sr-only">(current)</span></a>
-          <a class="nav-item nav-link" href="#">Login</a>
-          <a class="nav-item nav-link" href="#">Registro</a>
+          <a class="nav-item nav-link" href="#">Carrito(0)</a>
           <a class="nav-item nav-link" href="#">Contacto</a>
       </div>
       <div class="d-flex flex-row justify-content-center">
@@ -49,42 +54,60 @@
       </div>
     </nav>
 
-    <section class="container fondo">
+  <div class="container">
+    <br>
+      <div class="alert alert-success">
+        <?php echo $mensaje; ?>
+        <a href="#" class="badge badge-success">Ver Carrito</a>
+      </div>
 
-  <?php
+      <div class="row">
+        <?php
+          $sentencia=$pdo->prepare("SELECT * FROM product");
+          $sentencia->execute();
+          $listaProductos=$sentencia->fetchAll(PDO::FETCH_ASSOC);
+        ?>
+        <?php foreach($listaProductos as $producto){ ?>
+          <div class="col-3">
+            <div class="card">
+              <img 
+              title="<?php echo $producto['name'];?>"
+              alt="<?php echo $producto['name'];?>"
+              class="card-img-top" 
+              src="<?php echo $producto['url_image'];?>"
+              data-toggle="popover"
+              data-trigger="hover"
+              data-content="Categoria: <?php echo $producto['category'];?>. Marca: <?php echo $producto['brand'];?>."
+              >
 
-    include_once 'conexion.php';
-          
-          
-    $sql = "SELECT * from product ";
-    $result= mysqli_query($conexion,$sql);
+              <div class="card-body">
+                <span><?php echo $producto['name']; ?></span>
+                <h5 class="card-title">$<?php echo $producto['price'];?></h5>
+                
+                <form action="" method="post">
+                  <input type="text" name="id" id="id" value="<?php echo openssl_encrypt($producto['id'], $COD, $KEY);?>">
+                  <input type="text" name="nombre" id="nombre" value="<?php echo openssl_encrypt($producto['name'], $COD, $KEY);?>">
+                  <input type="text" name="precio" id="precio" value="<?php echo openssl_encrypt($producto['price'], $COD, $KEY);?>">
+                  <input type="text" name="cantidad" id="cantidad" value="<?php echo openssl_encrypt(1, $COD, $KEY);?>">
 
-    while($mostrar=mysqli_fetch_array($result)){
-      $imgUrl = $mostrar['url_image'];
-  ?>
-          <div class="panel panel-default" align='center'> 
-            <div class="panel-heading">
-              <?php echo $mostrar['name']?>
-            </div>
-              <div class="panel-body">
-                <img src=<?php echo $imgUrl ?> alt="producto">
+                  <button class="btn btn-primary"
+                      name="btnAction"
+                      value="Agregar" 
+                      type="submit">
+                      agregar al carrito
+                  </button>
+                </form>
               </div>
-
-              <table class="table">
-                <?php echo "<br/>",'$', $mostrar['price'], ' BotonCarrito'?>
-              </table>
+            </div>
           </div>
-  <?php
-    }
-  ?>
-  
+        <?php } ?>
+      </div>
+  </div>
 
-    </section>
-
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="js/bootstrap.js"></script>
-  </body>
+  <script>
+    $(function () {
+      $('[data-toggle="popover"]').popover()
+    })
+  </script>
+</body>
 </html>
